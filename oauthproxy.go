@@ -230,7 +230,7 @@ func NewOAuthProxy(opts *Options, validator func(string) bool) *OAuthProxy {
 			if u.Fragment != "" {
 				path = u.Fragment
 			}
-			logger.Printf("mapping path %q => file system %q", path, u.Path)
+			logger.Printf("KWDEBUG mapping path %q => file system %q", path, u.Path)
 			proxy := NewFileServer(path, u.Path)
 			uProxy := UpstreamProxy{
 				upstream:  path,
@@ -732,8 +732,8 @@ func (p *OAuthProxy) OAuthStart(rw http.ResponseWriter, req *http.Request) {
 // OAuthCallback is the OAuth2 authentication flow callback that finishes the
 // OAuth2 authentication flow
 func (p *OAuthProxy) OAuthCallback(rw http.ResponseWriter, req *http.Request) {
-	logger.Print("KWDEBUG OAuthCallback")
-	fmt.Print("KWDEBUG OAuthCallback")
+	logger.Print("KWDEBUG OAuthCallback 2")
+	fmt.Print("KWDEBUG OAuthCallback 3")
 
 	remoteAddr := getRemoteAddr(req)
 
@@ -785,6 +785,8 @@ func (p *OAuthProxy) OAuthCallback(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	logger.Printf("KWDEBUG redirect %s", redirect)
+
 	if !p.IsValidRedirect(redirect) {
 		redirect = "/"
 	}
@@ -798,8 +800,11 @@ func (p *OAuthProxy) OAuthCallback(rw http.ResponseWriter, req *http.Request) {
 			p.ErrorPage(rw, 500, "Internal Error", "Internal Error")
 			return
 		}
+		logger.Printf("KWDEBUG redirecting %s", redirect)
+
 		http.Redirect(rw, req, redirect, 302)
 	} else {
+		logger.Printf("KWDEBUG not valid ")
 		logger.PrintAuthf(session.Email, req, logger.AuthFailure, "Invalid authentication via OAuth2: unauthorized")
 		p.ErrorPage(rw, 403, "Permission Denied", "Invalid Account")
 	}
