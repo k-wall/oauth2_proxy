@@ -149,6 +149,9 @@ func main() {
 		return
 	}
 
+	fmt.Printf("KWDEBUG main");
+	logger.Printf("KWDEBUG main")
+
 	opts := NewOptions()
 
 	cfg := make(EnvOptions)
