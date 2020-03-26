@@ -732,6 +732,8 @@ func (p *OAuthProxy) OAuthStart(rw http.ResponseWriter, req *http.Request) {
 // OAuthCallback is the OAuth2 authentication flow callback that finishes the
 // OAuth2 authentication flow
 func (p *OAuthProxy) OAuthCallback(rw http.ResponseWriter, req *http.Request) {
+	logger.Print("KWDEBUG OAuthCallback")
+
 	remoteAddr := getRemoteAddr(req)
 
 	// finish the oauth cycle
@@ -748,12 +750,16 @@ func (p *OAuthProxy) OAuthCallback(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	session, err := p.redeemCode(req.Host, req.Form.Get("code"))
+	get := req.Form.Get("code")
+	logger.Printf("KWDEBUG redeeming code %s", get)
+
+	session, err := p.redeemCode(req.Host, get)
 	if err != nil {
 		logger.Printf("Error redeeming code during OAuth2 callback: %s ", err.Error())
 		p.ErrorPage(rw, 500, "Internal Error", "Internal Error")
 		return
 	}
+	logger.Panicf("KWDEBUG redeemed code")
 
 	s := strings.SplitN(req.Form.Get("state"), ":", 2)
 	if len(s) != 2 {
